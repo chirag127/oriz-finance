@@ -8,6 +8,11 @@ import { routes, type Route } from '@/core/router';
 const DRIVE_LABELS: Record<Route['drive'], { label: string; icon: string; color: string }> = {
   wealth: { label: 'Wealth', icon: '💎', color: 'var(--accent-growth)' },
   banking: { label: 'Banking', icon: '🏦', color: 'var(--accent-primary)' },
+  loans: { label: 'Loans & EMI', icon: '💳', color: 'var(--accent-cost)' },
+  invest: { label: 'Investments', icon: '📈', color: 'var(--accent-gain)' },
+  tax: { label: 'Tax', icon: '📋', color: 'var(--accent-warning)' },
+  salary: { label: 'Salary', icon: '💼', color: 'var(--accent-secondary)' },
+  gen: { label: 'General', icon: '🔢', color: 'var(--accent-neutral)' },
   market: { label: 'Markets', icon: '📊', color: 'var(--accent-secondary)' },
   news: { label: 'News', icon: '📰', color: 'var(--accent-warning)' },
   util: { label: 'Utilities', icon: '🛠️', color: 'var(--accent-neutral)' },
@@ -49,6 +54,11 @@ export function render(): HTMLElement {
     <!-- App Grid by Drive -->
     ${renderDriveSection('wealth')}
     ${renderDriveSection('banking')}
+    ${renderDriveSection('loans')}
+    ${renderDriveSection('invest')}
+    ${renderDriveSection('tax')}
+    ${renderDriveSection('salary')}
+    ${renderDriveSection('gen')}
     ${renderDriveSection('market')}
     ${renderDriveSection('news')}
     ${renderDriveSection('util')}

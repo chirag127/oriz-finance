@@ -10,7 +10,7 @@ export interface Route {
   title: string;
   icon: string;
   component: () => Promise<HTMLElement>;
-  drive: 'wealth' | 'banking' | 'market' | 'news' | 'util' | 'system';
+  drive: 'wealth' | 'banking' | 'market' | 'news' | 'util' | 'system' | 'loans' | 'invest' | 'tax' | 'salary' | 'gen';
   seo: SEOConfig;
 }
 
@@ -118,6 +118,96 @@ export const routes: Route[] = [
     path: '/apps/banking/p2p', title: 'P2P Lending Calculator', icon: '🤝',
     component: () => import('@/apps/banking/P2PLendingCalculator').then(m => m.render()), drive: 'banking',
     seo: { title: 'P2P Lending Calculator - Peer to Peer Investment Returns', description: 'Calculate P2P lending returns with simple interest. Includes RBI caps, platform fees, TDS deductions for peer-to-peer investments.', keywords: ['P2P lending', 'peer to peer lending', 'P2P calculator', 'simple interest', 'RBI P2P'] }
+  },
+
+  // ========== DRIVE: LOANS (6 Apps) ==========
+  {
+    path: '/apps/loans/personal', title: 'Personal Loan Calculator', icon: '💳',
+    component: () => import('@/apps/loans/PersonalLoanCalculator').then(m => m.render()), drive: 'loans',
+    seo: { title: 'Personal Loan Calculator - Flat vs Reducing Rate', description: 'Compare flat rate and reducing balance personal loans. Calculate EMI, total interest, and find the better option.', keywords: ['personal loan calculator', 'flat vs reducing', 'EMI calculator', 'loan comparison'] }
+  },
+  {
+    path: '/apps/loans/education', title: 'Education Loan Calculator', icon: '🎓',
+    component: () => import('@/apps/loans/EducationLoanCalculator').then(m => m.render()), drive: 'loans',
+    seo: { title: 'Education Loan Calculator with Moratorium', description: 'Calculate education loan EMI with moratorium period. See how interest accrues during course and repayment options.', keywords: ['education loan', 'student loan', 'moratorium', 'study loan India'] }
+  },
+  {
+    path: '/apps/loans/compare', title: 'Loan Comparison', icon: '⚖️',
+    component: () => import('@/apps/loans/LoanComparisonTool').then(m => m.render()), drive: 'loans',
+    seo: { title: 'Loan Comparison Tool - Compare Two Loans', description: 'Compare two loan offers side by side. Find the cheaper option based on EMI, total interest, and tenure.', keywords: ['loan comparison', 'compare loans', 'best loan offer', 'EMI comparison'] }
+  },
+  {
+    path: '/apps/loans/prepayment', title: 'Prepayment Calculator', icon: '💸',
+    component: () => import('@/apps/loans/PrepaymentCalculator').then(m => m.render()), drive: 'loans',
+    seo: { title: 'Loan Prepayment Calculator - Save Interest', description: 'Calculate savings from prepaying your loan. See how extra payments reduce tenure and interest.', keywords: ['prepayment calculator', 'part payment', 'loan foreclosure', 'save interest'] }
+  },
+  {
+    path: '/apps/loans/eligibility', title: 'Loan Eligibility', icon: '✅',
+    component: () => import('@/apps/loans/LoanEligibilityCalculator').then(m => m.render()), drive: 'loans',
+    seo: { title: 'Loan Eligibility Calculator - FOIR Based', description: 'Check your loan eligibility based on income and existing EMIs. Calculate maximum loan amount.', keywords: ['loan eligibility', 'FOIR', 'income to EMI ratio', 'maximum loan'] }
+  },
+  {
+    path: '/apps/loans/moratorium', title: 'Moratorium Calculator', icon: '⏸️',
+    component: () => import('@/apps/loans/MoratoriumCalculator').then(m => m.render()), drive: 'loans',
+    seo: { title: 'Loan Moratorium Calculator - EMI Deferral Cost', description: 'Calculate the true cost of EMI moratorium. See how deferring payments increases your total loan burden.', keywords: ['moratorium calculator', 'EMI deferral', 'COVID moratorium', 'loan extension'] }
+  },
+
+  // ========== DRIVE: INVEST (2 Apps) ==========
+  {
+    path: '/apps/invest/nsc', title: 'NSC Calculator', icon: '🏛️',
+    component: () => import('@/apps/invest/NSCCalculator').then(m => m.render()), drive: 'invest',
+    seo: { title: 'NSC Calculator - National Savings Certificate', description: 'Calculate NSC maturity value with year-wise breakdown. 5-year tax saving investment with compounding interest.', keywords: ['NSC calculator', 'national savings certificate', 'tax saving', 'Section 80C'] }
+  },
+  {
+    path: '/apps/invest/xirr', title: 'XIRR Calculator', icon: '📊',
+    component: () => import('@/apps/invest/XIRRCalculator').then(m => m.render()), drive: 'invest',
+    seo: { title: 'XIRR Calculator - Returns on Irregular Cash Flows', description: 'Calculate XIRR for investments with irregular cash flows. Better than CAGR for SIP and multiple investments.', keywords: ['XIRR calculator', 'irregular returns', 'SIP returns', 'mutual fund XIRR'] }
+  },
+
+  // ========== DRIVE: TAX (1 App) ==========
+  {
+    path: '/apps/tax/tds', title: 'TDS Calculator', icon: '📋',
+    component: () => import('@/apps/tax/TDSCalculator').then(m => m.render()), drive: 'tax',
+    seo: { title: 'TDS Calculator - Tax Deducted at Source', description: 'Calculate TDS on salary, interest, rent, and professional fees. Know applicable TDS rates by section.', keywords: ['TDS calculator', 'tax deducted at source', 'TDS rates', 'Section 194'] }
+  },
+
+  // ========== DRIVE: SALARY (3 Apps) ==========
+  {
+    path: '/apps/salary/take-home', title: 'Take-Home Calculator', icon: '💼',
+    component: () => import('@/apps/salary/TakeHomeCalculator').then(m => m.render()), drive: 'salary',
+    seo: { title: 'Take-Home Salary Calculator - CTC to In-Hand', description: 'Calculate in-hand salary from CTC. See full breakdown of Basic, HRA, PF, Tax, and net take-home pay.', keywords: ['take home calculator', 'CTC to in-hand', 'salary calculator', 'net salary'] }
+  },
+  {
+    path: '/apps/salary/gratuity', title: 'Gratuity Calculator', icon: '🎁',
+    component: () => import('@/apps/salary/GratuityCalculator').then(m => m.render()), drive: 'salary',
+    seo: { title: 'Gratuity Calculator - End of Service Benefit', description: 'Calculate gratuity amount based on last salary and years of service. Know tax exemption limits.', keywords: ['gratuity calculator', 'end of service', 'retirement benefit', 'gratuity tax'] }
+  },
+  {
+    path: '/apps/salary/leave-encashment', title: 'Leave Encashment', icon: '🏖️',
+    component: () => import('@/apps/salary/LeaveEncashmentCalculator').then(m => m.render()), drive: 'salary',
+    seo: { title: 'Leave Encashment Calculator', description: 'Calculate payment for unused leaves. Know tax treatment on retirement vs during service.', keywords: ['leave encashment', 'unused leave payment', 'leave salary', 'leave tax'] }
+  },
+
+  // ========== DRIVE: GENERAL (4 Apps) ==========
+  {
+    path: '/apps/gen/purchasing-power', title: 'Purchasing Power', icon: '📉',
+    component: () => import('@/apps/gen/PurchasingPowerCalculator').then(m => m.render()), drive: 'gen',
+    seo: { title: 'Purchasing Power Calculator - Inflation Impact', description: 'See how inflation erodes your money. Calculate future and past value adjusted for inflation.', keywords: ['purchasing power', 'inflation calculator', 'future value', 'money value'] }
+  },
+  {
+    path: '/apps/gen/rule-of-72', title: 'Rule of 72', icon: '📐',
+    component: () => import('@/apps/gen/RuleOf72Calculator').then(m => m.render()), drive: 'gen',
+    seo: { title: 'Rule of 72 Calculator - Money Doubling Time', description: 'Quick mental math to find how long it takes to double your money. See wealth multiplication timeline.', keywords: ['rule of 72', 'doubling time', 'compound interest', 'investment growth'] }
+  },
+  {
+    path: '/apps/gen/simple-interest', title: 'Simple Interest', icon: '📊',
+    component: () => import('@/apps/gen/SimpleInterestCalculator').then(m => m.render()), drive: 'gen',
+    seo: { title: 'Simple Interest Calculator', description: 'Calculate simple interest on any principal amount. Compare with compound interest.', keywords: ['simple interest', 'SI calculator', 'interest calculation', 'loan interest'] }
+  },
+  {
+    path: '/apps/gen/compound-interest', title: 'Compound Interest', icon: '📈',
+    component: () => import('@/apps/gen/CompoundInterestCalculator').then(m => m.render()), drive: 'gen',
+    seo: { title: 'Compound Interest Calculator - Multiple Frequencies', description: 'Calculate compound interest with different compounding frequencies. See the power of compounding.', keywords: ['compound interest', 'CI calculator', 'compounding frequency', 'interest on interest'] }
   },
 
   // ========== DRIVE C: MARKETS (6 Apps) ==========

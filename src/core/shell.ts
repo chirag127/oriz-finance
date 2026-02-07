@@ -8,6 +8,11 @@ import { router, routes, type Route } from './router';
 const DRIVE_LABELS: Record<Route['drive'], { label: string; icon: string }> = {
   wealth: { label: 'Wealth', icon: '💎' },
   banking: { label: 'Banking', icon: '🏦' },
+  loans: { label: 'Loans & EMI', icon: '💳' },
+  invest: { label: 'Investments', icon: '📈' },
+  tax: { label: 'Tax', icon: '📋' },
+  salary: { label: 'Salary', icon: '💼' },
+  gen: { label: 'General', icon: '🔢' },
   market: { label: 'Markets', icon: '📊' },
   news: { label: 'News', icon: '📰' },
   util: { label: 'Utilities', icon: '🛠️' },
@@ -81,7 +86,7 @@ class Shell {
    * Render sidebar navigation grouped by drive
    */
   private renderSidebarNav(): string {
-    const drives: Route['drive'][] = ['system', 'wealth', 'banking', 'market', 'news', 'util'];
+    const drives: Route['drive'][] = ['system', 'wealth', 'banking', 'loans', 'invest', 'tax', 'salary', 'gen', 'market', 'news', 'util'];
 
     return drives
       .map((drive) => {

@@ -1,28 +1,15 @@
 ---
+import InlineSIPCalculator from '~/components/InlineSIPCalculator.tsx'
+/*
+ * Home — folio strip + headline + inline live SIP calculator + leader-dotted
+ * catalogue of all 28 calculators across 4 ledgers.
+ *
+ * The page IS a ledger sheet. The grid is the chrome; the dotted leaders are
+ * the index; the double rule is the sum.
+ */
 import BaseLayout from '~/layouts/BaseLayout.astro'
-import { SITE_CONFIG, SITE_EMOJI } from '~/lib/siteConfig'
-import { FAMILY } from '@chirag127/oriz-ui'
-import SIPCalculator from '~/components/calculators/SIPCalculator.tsx'
-import EMICalculator from '~/components/calculators/EMICalculator.tsx'
-
-const calculatorGroups = [
-  {
-    title: 'Investments',
-    items: ['SIP', 'Lumpsum', 'Step-up SIP', 'SWP', 'CAGR / XIRR', 'Goal planner', 'FIRE'],
-  },
-  {
-    title: 'Loans & EMI',
-    items: ['Home loan EMI', 'Car loan', 'Personal loan', 'Prepayment impact', 'Loan comparison', 'Eligibility / FOIR'],
-  },
-  {
-    title: 'Banking & savings',
-    items: ['FD', 'RD', 'PPF', 'NPS', 'NSC', 'SSY', 'Compound interest'],
-  },
-  {
-    title: 'Tax & salary',
-    items: ['Take-home (CTC → in-hand)', 'TDS', 'HRA exemption', 'Gratuity', 'Leave encashment', 'GST'],
-  },
-]
+import { CALCULATORS, LEDGERS } from '~/lib/catalogue'
+import { SITE_CONFIG } from '~/lib/siteConfig'
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -30,147 +17,202 @@ const jsonLd = {
   name: `${SITE_CONFIG.name} — oriz`,
   url: SITE_CONFIG.origin,
   description: SITE_CONFIG.description,
-  publisher: { '@type': 'Person', name: FAMILY.operator.name, url: `${FAMILY.rootOrigin}/about/` },
+  publisher: { '@type': 'Person', name: 'Chirag Singhal', url: 'https://oriz.in' },
 }
 ---
 
 <BaseLayout jsonLd={jsonLd}>
-  <section class="hero container-page">
-    <p class="eyebrow">{SITE_EMOJI} Part of the <a href={FAMILY.rootOrigin}>oriz</a> family</p>
-    <h1 class="hero-h">
-      Calculators that <span class="hero-accent">show the math</span>.
-    </h1>
-    <p class="hero-lede">
-      {SITE_CONFIG.tagline}. Every input mapped to every output, with the formula
-      on screen — not a black box. Math runs in your browser; nothing leaves your device.
+  {/* ── Hero — Fraunces 64px headline + Source Sans lede ── */}
+  <section class="spine hero" aria-label="Folio of calculators">
+    <h1 class="hero-h">Calculators that show the math.</h1>
+    <p class="hero-sub">
+      A folio of <span class="num">28</span> calculators for Indian money — SIP, EMI,
+      FIRE, FD, RD, PPF, NPS, HRA, TDS, take-home. No popups. No advisor CTA. Inputs
+      never leave your device.
     </p>
-    <div class="hero-cta">
-      <a href="#sip" class="btn btn-primary">Try the SIP calculator →</a>
-      <a href="#catalogue" class="btn">Browse all calculators</a>
-    </div>
   </section>
 
-  <section id="sip" class="container-page section">
-    <h2 class="section-h">SIP — future value</h2>
+  {/* ── Inline live SIP calculator ── */}
+  <section class="spine isip-section" aria-label="Live SIP calculator">
+    <h2 class="section-h mono">SIP — live</h2>
     <p class="section-lede">
-      How much will a monthly SIP grow into? Punch in the amount, expected return,
-      and tenure; the formula and year-by-year breakdown are right below the result.
+      A taste. Type a monthly amount, expected return, and tenure; the corpus
+      updates as you type. The full ledger sits one click away.
     </p>
-    <SIPCalculator client:idle />
+    <InlineSIPCalculator client:idle />
   </section>
 
-  <section id="emi" class="container-page section">
-    <h2 class="section-h">Home loan — EMI</h2>
+  {/* ── Catalogue — leader-dotted TOC of every calculator ── */}
+  <section id="catalogue" class="spine cat" aria-label="Catalogue">
+    <h2 class="section-h mono">Catalogue</h2>
     <p class="section-lede">
-      Standard amortising EMI for any principal, rate, and tenure. No lead capture,
-      no &ldquo;talk to an advisor&rdquo; popup — just the formula and the answer.
-    </p>
-    <EMICalculator client:idle />
-  </section>
-
-  <section id="catalogue" class="container-page section">
-    <h2 class="section-h">Calculator catalogue</h2>
-    <p class="section-lede">
-      The full set lands on the sub-pages as the math is wired up. The two above
-      are live; the rest follow as React islands using the same shape.
+      <span class="num">{CALCULATORS.length}</span> calculators across{' '}
+      <span class="num">{LEDGERS.length}</span> ledgers. The two-letter code on
+      the right of each row is `live` when the calculator is wired up;
+      otherwise `soon`.
     </p>
 
-    <div class="cat-grid">
-      {calculatorGroups.map((g) => (
-        <div class="cat">
-          <h3 class="cat-h">{g.title}</h3>
-          <ul class="cat-list">
-            {g.items.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
+    {LEDGERS.map((ledger) => (
+      <div class="cat-ledger">
+        <h3 class="cat-ledger-h">
+          <span class="cat-ledger-num mono">
+            {LEDGERS.findIndex((l) => l.key === ledger.key) + 1}.
+          </span>
+          {ledger.label}
+        </h3>
+        <ul class="cat-list">
+          {CALCULATORS.filter((c) => c.ledger === ledger.key).map((c) => (
+            <li>
+              <a class="toc-row cat-row" href={c.live ? `/calculators/${c.slug}/` : `/calculators/${c.slug}/`}>
+                <span class="toc-name cat-name">{c.name}</span>
+                <span class="toc-value cat-status mono">{c.live ? 'live' : 'soon'}</span>
+              </a>
+              <p class="cat-brief">{c.brief}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
   </section>
 
-  <section class="container-page section">
-    <h2 class="section-h">How {SITE_CONFIG.name} stays free</h2>
-    <div class="prose">
+  {/* ── How this stays free ── */}
+  <section class="spine note" aria-label="How this stays free">
+    <h2 class="section-h mono">How this stays free</h2>
+    <div class="note-prose">
       <p>
-        Every calculator is a static page. The math runs in your browser — no
-        inputs ever leave your device, no account is needed to use a calculator.
-        Sign-in is optional and only powers cross-site features (saved
-        scenarios, bookmarks) that follow you across the oriz family.
+        Every calculator runs in your browser. The math, the formula, the
+        year-by-year breakdown — all client-side. Inputs never leave your
+        device. Sign-in is optional and only unlocks the ability to save
+        scenarios across the oriz family of sites.
       </p>
       <p>
-        Display ads on a few pages cover the domain renewal. Nothing is gated.
+        Display ads on a few pages cover the domain renewal. Nothing is
+        gated. <a href="/legal/disclaimer/">Read the SEBI disclaimer →</a>
       </p>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .hero { padding-block: 3rem 2.5rem; border-bottom: 1px solid var(--color-border); }
-  .eyebrow {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    background: var(--color-bg-soft);
-    border: 1px solid var(--color-border);
-    color: var(--color-fg-muted);
-    font-size: 0.75rem;
-    margin: 0 0 1rem;
+  .hero {
+    padding-block: clamp(3rem, 8vw, 4.5rem) clamp(1.5rem, 4vw, 2.25rem);
+    border-bottom: 1px solid var(--rule);
   }
-  .eyebrow a { color: var(--color-fg-muted); }
-  .eyebrow a:hover { color: var(--color-accent); }
   .hero-h {
-    font-family: var(--font-serif);
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    margin: 0 0 1rem;
-    max-width: 24ch;
-  }
-  .hero-accent { color: var(--color-accent); }
-  .hero-lede { color: var(--color-fg-muted); font-size: 1.0625rem; max-width: 60ch; margin: 0 0 1.5rem; }
-  .hero-cta { display: flex; flex-wrap: wrap; gap: 0.625rem; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    height: 40px; padding-inline: 1rem;
-    background: var(--color-bg-soft);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-button);
-    color: var(--color-fg); font-weight: 500; text-decoration: none;
-    font-size: 0.9375rem;
-  }
-  .btn:hover { border-color: color-mix(in oklab, var(--color-accent) 50%, var(--color-border)); color: var(--color-fg); }
-  .btn-primary { background: var(--color-accent); color: var(--color-accent-fg); border-color: var(--color-accent); }
-  .btn-primary:hover { color: var(--color-accent-fg); }
-
-  .section { padding-block: 3rem; border-bottom: 1px solid var(--color-border); }
-  .section:last-of-type { border-bottom: 0; }
-  .section-h {
-    font-family: var(--font-serif);
-    font-size: clamp(1.375rem, 3vw, 1.875rem);
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    /* H1 only at 64px per the brief — small footprint, big presence. */
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    line-height: 1.05;
     letter-spacing: -0.01em;
-    margin: 0 0 0.75rem;
+    color: var(--ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
   }
-  .section-lede { color: var(--color-fg-muted); max-width: 64ch; margin: 0 0 2rem; font-size: 1rem; }
+  .hero-sub {
+    font-size: 1.125rem;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0;
+    max-width: 60ch;
+  }
 
-  .cat-grid {
-    display: grid; gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  .isip-section {
+    padding-block: clamp(2rem, 5vw, 3rem);
+    border-bottom: 1px solid var(--rule);
   }
+  .section-h {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-mute);
+    font-weight: 500;
+    margin: 0 0 0.625rem;
+  }
+  .section-lede {
+    color: var(--ink-mute);
+    font-size: 0.9375rem;
+    margin: 0 0 1.5rem;
+    max-width: 64ch;
+  }
+
   .cat {
-    padding: 1.25rem;
-    background: var(--color-bg-soft);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
+    padding-block: clamp(2rem, 5vw, 3rem);
+    border-bottom: 1px solid var(--rule);
   }
-  .cat-h {
-    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--color-fg-muted); margin: 0 0 0.75rem;
+  .cat-ledger {
+    margin-top: 2rem;
   }
-  .cat-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.375rem; color: var(--color-fg); font-size: 0.9375rem; }
+  .cat-ledger-h {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-variation-settings: 'opsz' 60, 'SOFT' 50;
+    font-size: clamp(1.375rem, 2.5vw, 1.75rem);
+    color: var(--ink);
+    margin: 0 0 0.875rem;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+  }
+  .cat-ledger-num {
+    font-size: 12px;
+    color: var(--ink-mute);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+  }
+  .cat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.625rem 2rem;
+  }
+  @media (min-width: 760px) {
+    .cat-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .cat-list li {
+    padding-block: 0.25rem;
+  }
+  .cat-name {
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .cat-status {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-mute);
+  }
+  .cat-brief {
+    margin: 0.125rem 0 0;
+    color: var(--ink-mute);
+    font-size: 13px;
+    line-height: 1.45;
+  }
 
-  .prose { color: var(--color-prose); max-width: 64ch; line-height: 1.7; }
-  .prose p { margin: 0 0 1.25rem; }
+  .note {
+    padding-block: clamp(2rem, 5vw, 3rem) 2rem;
+  }
+  .note-prose p {
+    color: var(--ink);
+    line-height: 1.7;
+    margin: 0 0 1rem;
+    max-width: 64ch;
+  }
+  .note-prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--accent) 50%, transparent);
+    text-underline-offset: 3px;
+  }
+  .note-prose a:hover {
+    text-decoration-color: var(--accent);
+  }
 </style>

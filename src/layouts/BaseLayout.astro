@@ -1,9 +1,17 @@
 ---
+/*
+ * BaseLayout — single page shell for every oriz-finance route.
+ *
+ * v2 graph-paper-light surface. Fonts: Fraunces (display, H1 only) +
+ * Source Sans 3 (body) + JetBrains Mono (every numeric, mandatory tnum).
+ *
+ * No theme picker — light/dark via prefers-color-scheme only. The dark
+ * variant is a recessed inversion that keeps the graph grid visible.
+ */
 import '~/styles/global.css'
-import preflight from '~/lib/preflight.js?raw'
-import Header from '~/components/Header.astro'
+import '~/styles/oriz-ui-overrides.css'
 import Footer from '~/components/Footer.astro'
-import SiteSidebar from '~/components/SiteSidebar.astro'
+import Header from '~/components/Header.astro'
 import { SITE_CONFIG } from '~/lib/siteConfig'
 
 interface Props {
@@ -12,8 +20,6 @@ interface Props {
   canonical?: string
   noindex?: boolean
   jsonLd?: Record<string, unknown> | Record<string, unknown>[]
-  /** Render the left sidebar? Defaults true. */
-  withSidebar?: boolean
 }
 
 const {
@@ -22,16 +28,14 @@ const {
   canonical = `${SITE_CONFIG.origin}${Astro.url.pathname}`,
   noindex = false,
   jsonLd,
-  withSidebar = true,
 } = Astro.props
 
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT
 const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN
-const ga4Id = import.meta.env.PUBLIC_GA4_ID
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark" data-accent="amber">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -47,75 +51,57 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID
     <meta property="og:site_name" content={`${SITE_CONFIG.name} — oriz`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@chirag127" />
+    <meta name="theme-color" content="#F0F2EE" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {/*
+      Type stack — Fraunces (display, opsz 144 + soft -10), Source Sans 3
+      (body), JetBrains Mono (numerics).
+    */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,30..100&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
     />
 
-    <script is:inline set:html={preflight} />
+    {
+      jsonLd && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])}
+        />
+      )
+    }
 
-    {jsonLd && (
-      <script
-        is:inline
-        type="application/ld+json"
-        set:html={JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])}
-      />
-    )}
+    {
+      adsenseClient && (
+        <script
+          is:inline
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+          crossorigin="anonymous"
+        />
+      )
+    }
 
-    {adsenseClient && (
-      <script
-        is:inline
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
-        crossorigin="anonymous"
-      />
-    )}
-
-    {beaconToken && (
-      <script
-        is:inline
-        defer
-        src="https://static.cloudflareinsights.com/beacon.min.js"
-        data-cf-beacon={`{"token": "${beaconToken}"}`}
-      />
-    )}
-
-    {ga4Id && (
-      <>
-        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`} />
-        <script is:inline set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ga4Id}');`} />
-      </>
-    )}
+    {
+      beaconToken && (
+        <script
+          is:inline
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token": "${beaconToken}"}`}
+        />
+      )
+    }
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
     <Header />
-    {withSidebar ? (
-      <div class="with-sidebar">
-        <SiteSidebar />
-        <main id="main"><slot /></main>
-      </div>
-    ) : (
-      <main id="main"><slot /></main>
-    )}
+    <main id="main"><slot /></main>
     <Footer />
-
-    <style is:global>
-      .skip-link {
-        position: absolute;
-        left: -9999px;
-        top: 0;
-        background: var(--color-accent);
-        color: var(--color-accent-fg);
-        padding: 0.5rem 1rem;
-        z-index: 100;
-        border-radius: 0 0 0.5rem 0;
-      }
-      .skip-link:focus { left: 0; }
-    </style>
   </body>
 </html>

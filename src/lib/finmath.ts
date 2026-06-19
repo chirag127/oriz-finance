@@ -34,7 +34,7 @@ export function calculateSIP(
   const fv = (n: number) =>
     monthlyRate === 0
       ? monthlyInvestment * n
-      : monthlyInvestment * ((Math.pow(1 + monthlyRate, n) - 1) / monthlyRate) * (1 + monthlyRate)
+      : monthlyInvestment * (((1 + monthlyRate) ** n - 1) / monthlyRate) * (1 + monthlyRate)
 
   const yearlyBreakdown: SIPYear[] = []
   for (let year = 1; year <= years; year++) {
@@ -63,7 +63,11 @@ export function calculateSIP(
  * Standard amortizing-loan EMI:  EMI = P * r * (1 + r)^n / ((1 + r)^n - 1)
  * P = principal, r = monthly rate, n = months.
  */
-export function calculateEMI(principal: number, annualRate: number, years: number): {
+export function calculateEMI(
+  principal: number,
+  annualRate: number,
+  years: number,
+): {
   emi: number
   totalInterest: number
   totalPayment: number
@@ -74,7 +78,7 @@ export function calculateEMI(principal: number, annualRate: number, years: numbe
     const emi = principal / n
     return { emi, totalInterest: 0, totalPayment: principal }
   }
-  const pow = Math.pow(1 + r, n)
+  const pow = (1 + r) ** n
   const emi = (principal * r * pow) / (pow - 1)
   const totalPayment = emi * n
   return {
@@ -84,11 +88,13 @@ export function calculateEMI(principal: number, annualRate: number, years: numbe
   }
 }
 
-/** Indian-style currency formatter (lakhs/crores). */
+/** Indian-style currency formatter (lakhs/crores) — emits "₹12,34,567".
+ *  For separated-glyph rendering (rupee in Source Sans 3, digits in JetBrains
+ *  Mono) use `splitINR` from `~/lib/format` instead. */
 export function formatINR(n: number): string {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
-  }).format(n)
+  }).format(Number.isFinite(n) ? n : 0)
 }

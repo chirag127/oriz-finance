@@ -1,87 +1,140 @@
 ---
-import HeaderControls from '~/components/HeaderControls.tsx'
-import { SITE_CONFIG, SITE_EMOJI } from '~/lib/siteConfig'
-import { FAMILY } from '@chirag127/oriz-ui'
+/*
+ * Header — the "issue strip" of the folio. Two rows, both full-width.
+ *
+ * Row 1 (mono caps small): `oriz · finance` left, `calc ▾   ⌘K   ☾   ⓘ` right
+ * 2px tan rule between rows
+ * Row 2 (uppercase, tracked +0.15em, --rule colour):
+ *   FOLIO 002 · finance.oriz.in left, ISSUE MM / YYYY right
+ *
+ * Folio number = 002 because finance is site 002 in the family ordering.
+ * Issue auto-set from build date.
+ *
+ * Family-anchor pattern: every site has its own header. This one omits a
+ * traditional nav (the home page IS the navigation — a leader-dotted index
+ * of every calculator), and the controls row carries 4 affordances:
+ *   calc ▾   — anchor jump to the calculator catalogue on home
+ *   ⌘K       — placeholder for future command palette (no script wired)
+ *   ☾        — placeholder theme toggle (relies on prefers-color-scheme)
+ *   ⓘ        — link to /about/
+ */
+
+interface Props {
+  /** Subtitle to show after `oriz ·`. Defaults to `finance`. */
+  section?: string
+}
+
+const { section = 'finance' } = Astro.props
+
+const now = new Date()
+const month = String(now.getMonth() + 1).padStart(2, '0')
+const year = now.getFullYear()
+const ISSUE_LINE = `ISSUE ${month} / ${year}`
+const FOLIO = 'FOLIO 002'
+const DOMAIN = 'finance.oriz.in'
 ---
 
-<header class="site-header">
-  <div class="container-page header-inner">
-    <a href={FAMILY.rootOrigin} class="brand" aria-label="oriz hub">
-      <span class="brand-mark">oriz</span>
-      <span class="brand-dot">.</span>
-    </a>
-
-    <a href="/" class="site-badge" aria-label={SITE_CONFIG.name}>
-      <span class="site-emoji" aria-hidden="true">{SITE_EMOJI}</span>
-      <span class="site-name">{SITE_CONFIG.name}</span>
-    </a>
-
-    <nav aria-label="Primary" class="primary-nav">
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-      <a href="/contact/">Contact</a>
+<header class="hd">
+  <div class="hd-row hd-row-1 spine">
+    <a href="/" class="hd-mark mono">oriz · {section}</a>
+    <nav class="hd-controls mono" aria-label="Header controls">
+      <a href="/#catalogue" class="hd-ctrl">calc&nbsp;▾</a>
+      <span class="hd-ctrl hd-ctrl-mute" aria-hidden="true">⌘K</span>
+      <span class="hd-ctrl hd-ctrl-mute" aria-hidden="true">☾</span>
+      <a href="/about/" class="hd-ctrl" aria-label="About">ⓘ</a>
     </nav>
-
-    <HeaderControls client:idle siteName={SITE_CONFIG.name} />
   </div>
+  <hr class="hd-rule" aria-hidden="true" />
+  <div class="hd-row hd-row-2 spine">
+    <span class="hd-folio mono">{FOLIO} · {DOMAIN}</span>
+    <span class="hd-issue mono">{ISSUE_LINE}</span>
+  </div>
+  <hr class="hairline" />
 </header>
 
 <style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: color-mix(in oklab, var(--color-bg) 85%, transparent);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    border-bottom: 1px solid var(--color-border);
+  .hd {
+    background: transparent;
+    /* The header is intentionally NOT sticky — the page reads as a printed sheet. */
   }
-  .header-inner {
-    height: 64px;
+  .hd-row {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1rem;
+    height: 32px;
   }
-  .brand {
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+  .hd-row-1 .hd-mark {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    font-weight: 500;
     text-decoration: none;
-    color: var(--color-fg);
-    line-height: 1;
+    font-feature-settings:
+      'tnum' 1,
+      'zero' 1,
+      'calt' 0;
   }
-  .brand-dot { color: var(--color-accent); }
-  .site-badge {
+  .hd-row-1 .hd-mark:hover {
+    color: var(--accent);
+  }
+  .hd-controls {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.625rem;
-    background: var(--color-bg-soft);
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    color: var(--color-fg);
-    font-size: 0.875rem;
-    text-decoration: none;
-    line-height: 1;
+    gap: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    font-feature-settings:
+      'tnum' 1,
+      'zero' 1,
+      'calt' 0;
   }
-  .site-badge:hover {
-    border-color: color-mix(in oklab, var(--color-accent) 50%, var(--color-border));
-    color: var(--color-fg);
-  }
-  .site-emoji { font-size: 1rem; }
-  .primary-nav {
-    display: none;
-    gap: 1.5rem;
-    flex: 1;
-    font-size: 0.9375rem;
-  }
-  .primary-nav a {
-    color: var(--color-fg-muted);
+  .hd-ctrl {
+    color: var(--ink);
     text-decoration: none;
   }
-  .primary-nav a:hover { color: var(--color-fg); }
-  @media (min-width: 768px) {
-    .primary-nav { display: flex; }
+  .hd-ctrl:hover {
+    color: var(--accent);
+  }
+  .hd-ctrl-mute {
+    color: var(--ink-mute);
+    cursor: default;
+  }
+
+  /* The 2px tan rule between the two rows. */
+  .hd-rule {
+    height: 2px;
+    background: var(--rule);
+    border: 0;
+    margin: 0;
+  }
+
+  .hd-row-2 .hd-folio,
+  .hd-row-2 .hd-issue {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-mute);
+    font-feature-settings:
+      'tnum' 1,
+      'zero' 1,
+      'calt' 0;
+  }
+
+  @media (max-width: 600px) {
+    .hd-controls {
+      gap: 0.75rem;
+    }
+    .hd-row-2 .hd-folio,
+    .hd-row-2 .hd-issue {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+    }
   }
 </style>

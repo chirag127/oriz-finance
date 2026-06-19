@@ -5,46 +5,52 @@ import { SITE_CONFIG } from '~/lib/siteConfig'
 const updated = '2026-06-19'
 ---
 
-<BaseLayout title={`Disclaimer — ${SITE_CONFIG.name}`} description={`What ${SITE_CONFIG.name} is and isn't.`}>
-  <header class="container-prose page-head">
-    <p class="eyebrow"><a href="/">{SITE_CONFIG.name}</a> / <a href="/legal/">Legal</a> / Disclaimer</p>
+<BaseLayout
+  title={`Disclaimer — ${SITE_CONFIG.name}`}
+  description={`What ${SITE_CONFIG.name} is and isn't.`}
+>
+  <header class="prose-spine page-head">
+    <p class="eyebrow">
+      <a href="/">finance</a> / <a href="/legal/">legal</a> / disclaimer
+    </p>
     <h1>Disclaimer</h1>
     <p class="meta">Last updated: {updated}</p>
   </header>
 
-  <article class="container-prose prose">
+  <article class="prose-spine prose">
     <p>
       Everything on {SITE_CONFIG.origin} is published in good faith for general
       information only. Use it at your own risk.
     </p>
 
     <div class="callout">
-      <h2>SEBI disclaimer (calculators are not investment advice)</h2>
+      <h2>SEBI / IRDAI / RBI disclaimer</h2>
       <p>
         {SITE_CONFIG.name} is <strong>not</strong> registered with the Securities
-        and Exchange Board of India (SEBI), the Insurance Regulatory and Development
-        Authority of India (IRDAI), the Reserve Bank of India (RBI), or any other
-        financial regulator. Nothing on this site constitutes investment, tax,
-        or insurance advice under the SEBI (Investment Advisers) Regulations, 2013
-        or any successor regulation.
+        and Exchange Board of India (SEBI), the Insurance Regulatory and
+        Development Authority of India (IRDAI), the Reserve Bank of India (RBI),
+        or any other financial regulator. Nothing on this site constitutes
+        investment, tax, or insurance advice under the SEBI (Investment Advisers)
+        Regulations, 2013 or any successor regulation.
       </p>
       <p>
-        The calculators are <em>mathematical tools</em> that compute outputs from
-        the inputs you provide using documented formulas. Returns, EMIs, tax
-        liabilities, and projections shown are deterministic functions of those
-        inputs — they are not predictions, recommendations, or assurances of
-        future performance. Past performance does not indicate future results.
-        Mutual fund investments are subject to market risks; read all scheme-related
-        documents carefully.
+        The calculators are <em>mathematical tools</em> that compute outputs
+        from the inputs you provide using documented formulas. Returns, EMIs,
+        tax liabilities, and projections shown are deterministic functions of
+        those inputs — they are not predictions, recommendations, or assurances
+        of future performance. Past performance does not indicate future results.
+        Mutual fund investments are subject to market risks; read all
+        scheme-related documents carefully.
       </p>
       <p>
-        {SITE_CONFIG.name}, its operator, and its contributors do <strong>not</strong>
-        recommend, endorse, or assume responsibility for any specific mutual fund,
-        bank, NBFC, broker, insurance product, scheme, or investment advisor
-        referenced anywhere on this site. We do not solicit business from users
-        and we do not earn commissions on any financial product. Consult a
-        SEBI-registered investment advisor, a chartered accountant, or a qualified
-        professional before acting on any output produced here.
+        {SITE_CONFIG.name}, its operator, and its contributors do
+        <strong>not</strong> recommend, endorse, or assume responsibility for
+        any specific mutual fund, bank, NBFC, broker, insurance product, scheme,
+        or investment advisor referenced anywhere on this site. We do not
+        solicit business from users and we do not earn commissions on any
+        financial product. Consult a SEBI-registered investment advisor, a
+        chartered accountant, or a qualified professional before acting on any
+        output produced here.
       </p>
     </div>
 
@@ -87,22 +93,15 @@ const updated = '2026-06-19'
 </BaseLayout>
 
 <style>
-  .page-head { padding-block: 3rem 1.5rem; border-bottom: 1px solid var(--color-border); }
-  .eyebrow { color: var(--color-fg-muted); font-size: 0.8125rem; margin: 0 0 0.5rem; }
-  .eyebrow a { color: var(--color-fg-muted); text-decoration: none; }
-  h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
-  .meta { color: var(--color-fg-soft); font-size: 0.875rem; margin: 0.5rem 0 0; }
-  .prose { padding-block: 2.5rem 4rem; color: var(--color-prose); line-height: 1.7; font-size: 1.0625rem; }
-  .prose h2 { font-family: var(--font-serif); font-size: 1.375rem; font-weight: 600; color: var(--color-fg); margin: 2rem 0 1rem; }
-  .prose p { margin: 0 0 1.25rem; }
-  .prose a { color: var(--color-accent); }
   .callout {
     margin-block: 1.5rem 2.5rem;
     padding: 1.5rem 1.75rem;
-    background: var(--color-bg-soft);
-    border: 1px solid var(--color-border);
-    border-left: 4px solid var(--color-accent);
-    border-radius: var(--radius-card);
+    background: color-mix(in oklab, var(--debit) 6%, transparent);
+    border: 1px solid color-mix(in oklab, var(--debit) 35%, var(--rule));
+    border-left: 3px solid var(--debit);
   }
-  .callout h2 { margin-top: 0; }
+  .callout h2 {
+    margin-top: 0;
+    color: var(--debit);
+  }
 </style>

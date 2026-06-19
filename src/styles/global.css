@@ -1,41 +1,429 @@
-/* oriz-finance global stylesheet
+@import 'tailwindcss';
+
+/*
+ * oriz-finance — v2 graph-paper ledger tokens
  *
- * The design tokens, themes (dark / light / sepia / hc), accents, and component
- * primitives are all owned by @chirag127/oriz-ui. This file just composes them
- * with Tailwind v4 and adds a tiny set of finance-only overrides.
+ * Surface = engineering-print white with a hair of green; a printed-graph
+ * grid lives behind everything as fixed-attachment CSS background. Type =
+ * Fraunces (H1 only) + Source Sans 3 (body) + JetBrains Mono (every
+ * numeric, mandatory `tnum`, `zero`).
+ *
+ * Family-anchor mapping: --paper / --ink / --ink-mute / --rule are the
+ * same names oriz-home uses; values diverge per the brief. --accent is the
+ * graph teal (#0F766E). --debit (oxblood #9C2A2A) is finance's negative —
+ * never decorative.
  */
 
-@import 'tailwindcss';
-@import '@chirag127/oriz-ui/styles';
-@import '@chirag127/oriz-ui/components.css';
+@theme {
+  --font-display:
+    'Fraunces', 'GT Sectra', 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+  --font-sans:
+    'Source Sans 3', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-/* ------------------------------------------------------------------ */
-/* Site-specific minor overrides — keep this list small.               */
-/* If something belongs in every site, lift it into oriz-ui instead.   */
-/* ------------------------------------------------------------------ */
-
-.container-page {
-  max-width: var(--container-page);
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 2rem);
+  --container-spine: 1200px;
+  --container-prose: 720px;
 }
 
-.container-prose {
+@layer base {
+  :root {
+    color-scheme: light;
+
+    /* Graph-paper-light surface — engineering-print white with a hair of green. */
+    --paper: #f0f2ee;
+    --paper-deep: #e8ebe5;
+    --ink: #11201c; /* near-black with teal undertone */
+    --ink-mute: #5c6b66; /* assumption text, formula labels */
+    --rule: #c9b98a; /* hairline tan */
+
+    /* Token aliases used in the brief verbatim (so the spec snippets compile
+     * unchanged into this stylesheet). */
+    --surface: var(--paper);
+    --muted: var(--ink-mute);
+
+    --accent: #0f766e; /* graph teal — H1 underline, totals, focus ring */
+    --debit: #9c2a2a; /* oxblood — SEBI/IRDAI/RBI disclaimer, never decorative */
+    --negative: #b23a2a; /* losses, tax owed, overruns — never decorative */
+
+    /* Family-anchor compatibility tokens — name-mapped so anchor patterns
+     * pasted in (.toc-row, prose, page-head, [data-oriz-*]) just work. */
+    --mustard: var(--accent);
+    --vermilion: var(--debit);
+    --ledger: var(--accent);
+    --highlighter: var(--accent);
+  }
+
+  /* Dark variant — recessed inversion, grid stays visible. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --paper: #0e1614;
+      --paper-deep: #060c0b;
+      --ink: #e8ece8;
+      --ink-mute: #8a9994;
+      --rule: #6b5e3e;
+
+      --surface: var(--paper);
+      --muted: var(--ink-mute);
+
+      --accent: #5eead4; /* lifted teal for contrast */
+      --debit: #f0817a;
+      --negative: #f0817a;
+
+      --mustard: var(--accent);
+      --vermilion: var(--debit);
+      --ledger: var(--accent);
+      --highlighter: var(--accent);
+    }
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1;
+  }
+
+  /*
+   * THE GRAPH GRID — printed-graph background painted on the body.
+   *
+   * Three layers blended:
+   *   1) flat surface base
+   *   2) horizontal teal lines, every 8px, at 6%
+   *   3) vertical teal lines, every 8px, at 6%
+   *   4) horizontal MAJOR lines, every 40px, at 9% (= every 5th)
+   *   5) vertical   MAJOR lines, every 40px, at 9%
+   *
+   * `background-attachment: fixed` keeps the grid pinned to the viewport so
+   * scrolling reads as paper sliding under a fixed sheet — the brief is
+   * explicit on this.
+   */
+  body {
+    background-color: var(--surface);
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(15, 118, 110, 0.09) 0 1px,
+        transparent 1px 40px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(15, 118, 110, 0.09) 0 1px,
+        transparent 1px 40px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(15, 118, 110, 0.06) 0 1px,
+        transparent 1px 8px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(15, 118, 110, 0.06) 0 1px,
+        transparent 1px 8px
+      );
+    background-attachment: fixed;
+    background-position: 0 0;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.625;
+    overflow-y: scroll;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Mono utility — disable ligatures, enable tabular numerals + slashed zero.
+   * The brief makes this MANDATORY on every numeric across the site. */
+  code,
+  kbd,
+  pre,
+  samp,
+  .mono,
+  .num {
+    font-family: var(--font-mono);
+    font-feature-settings:
+      'tnum' 1,
+      'zero' 1,
+      'calt' 0;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums slashed-zero;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 30%, transparent);
+    color: var(--ink);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* ============================================================
+ * Containers
+ * ============================================================ */
+
+.spine {
+  max-width: var(--container-spine);
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 4vw, 2rem);
+}
+
+.prose-spine {
   max-width: var(--container-prose);
   margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 2rem);
+  padding-inline: clamp(1.5rem, 4vw, 2rem);
 }
 
-/* Two-column shell at >=1024px — sidebar on the left, content on the right.
- * Below 1024px the Sidebar collapses into a sheet driven by its own hamburger. */
-.with-sidebar {
+.hairline {
+  height: 1px;
+  background: var(--rule);
+  border: 0;
+  margin: 0;
+}
+
+/* ============================================================
+ * Signature 1 — Leader-dotted TOC.
+ *
+ * Used on:
+ *   - home catalogue (28 calculators × 4 ledgers)
+ *   - calculator-page right column (assumptions list)
+ *   - footer index column
+ *   - footer family column
+ *
+ * Implementation per the brief: 3-col grid where the middle column carries
+ * the dotted leader via a ::after pseudo. The leader is lifted to sit on
+ * the x-height baseline so it reads like a printed index.
+ * ============================================================ */
+
+.toc-row {
   display: grid;
-  grid-template-columns: 1fr;
-  min-height: calc(100vh - 64px);
+  grid-template-columns: max-content 1fr max-content;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.toc-row::after {
+  content: '';
+  border-bottom: 1px dotted var(--rule);
+  transform: translateY(-3px);
+  grid-column: 2;
+  grid-row: 1;
+}
+.toc-row .toc-name {
+  grid-column: 1;
+  grid-row: 1;
+  background: var(--paper);
+  padding-right: 0.25rem;
+  position: relative;
+  z-index: 1;
+}
+.toc-row .toc-value {
+  grid-column: 3;
+  grid-row: 1;
+  background: var(--paper);
+  padding-left: 0.25rem;
+  position: relative;
+  z-index: 1;
+  font-variant-numeric: tabular-nums slashed-zero;
+  color: var(--ink-mute);
 }
 
-@media (min-width: 1024px) {
-  .with-sidebar {
-    grid-template-columns: 260px minmax(0, 1fr);
-  }
+/* When the TOC row is itself an anchor — colour shifts on hover/focus. */
+a.toc-row {
+  text-decoration: none;
+  color: var(--ink);
+}
+a.toc-row:hover .toc-name,
+a.toc-row:focus-visible .toc-name {
+  color: var(--accent);
+}
+a.toc-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* ============================================================
+ * Signature 2 — Double-rule totals row.
+ *
+ * `border-style: double` renders as `══` — the printed-ledger convention
+ * for "this row is the sum." Used on year-by-year tables, tax-summary
+ * final liability, EMI grand total.
+ * ============================================================ */
+
+.totals td,
+.totals th {
+  border-top: 3px double var(--ink);
+  border-bottom: 3px double var(--ink);
+  font-weight: 600;
+  padding-block: 0.6rem;
+}
+
+/* ============================================================
+ * Page-head + prose — anchor pattern, repainted in finance tokens.
+ * ============================================================ */
+
+.page-head {
+  padding-block: clamp(2rem, 6vw, 3rem) 1.25rem;
+  border-bottom: 1px solid var(--rule);
+}
+.page-head .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 0.875rem;
+  font-feature-settings:
+    'tnum' 1,
+    'zero' 1,
+    'calt' 0;
+}
+.page-head .eyebrow a {
+  color: var(--ink-mute);
+  text-decoration: none;
+}
+.page-head .eyebrow a:hover {
+  color: var(--accent);
+}
+.page-head h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  font-size: clamp(2.25rem, 5vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--ink);
+}
+.page-head .lede {
+  margin: 1rem 0 0;
+  color: var(--ink-mute);
+  font-size: 1.0625rem;
+  max-width: 60ch;
+}
+.page-head .meta {
+  margin: 0.75rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-feature-settings:
+    'tnum' 1,
+    'zero' 1,
+    'calt' 0;
+}
+
+.prose {
+  padding-block: 2.5rem 4rem;
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 1.0625rem;
+  font-family: var(--font-sans);
+}
+.prose .lede {
+  font-size: 1.1875rem;
+  color: var(--ink);
+  margin: 0 0 2rem;
+}
+.prose h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: 'opsz' 36, 'SOFT' 50;
+  font-size: 1.5rem;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  margin: 2.5rem 0 1rem;
+}
+.prose h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.1875rem;
+  color: var(--ink);
+  margin: 1.75rem 0 0.625rem;
+}
+.prose p {
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in oklab, var(--accent) 50%, transparent);
+}
+.prose a:hover {
+  text-decoration-color: var(--accent);
+}
+.prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+  margin: 0 0 1.25rem;
+}
+.prose li {
+  margin-bottom: 0.5rem;
+}
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 0.125em 0.375em;
+  background: color-mix(in oklab, var(--rule) 30%, transparent);
+  color: var(--ink);
+  border-radius: 0;
+  font-feature-settings:
+    'tnum' 1,
+    'zero' 1,
+    'calt' 0;
+}
+.prose blockquote {
+  border-left: 2px solid var(--rule);
+  padding-left: 1rem;
+  margin-left: 0;
+  color: var(--ink-mute);
+  font-style: italic;
+}
+.prose hr {
+  height: 1px;
+  background: var(--rule);
+  border: 0;
+  margin: 2.5rem 0;
+}
+
+/* Skip link — visually hidden until focused. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--accent);
+  color: var(--paper);
+  padding: 0.5rem 1rem;
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* ============================================================
+ * Rupee glyph — sized 0.1em smaller than the digits beside it. The glyph
+ * stays in Source Sans 3 so the seam against JetBrains Mono digits is
+ * invisible at any size.
+ * ============================================================ */
+.rupee {
+  font-family: var(--font-sans);
+  font-size: 0.9em;
+  margin-right: 0.12em;
+  color: inherit;
 }

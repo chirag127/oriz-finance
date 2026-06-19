@@ -1,30 +1,35 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro'
-import { SITE_CONFIG } from '~/lib/siteConfig'
 
 const sections = [
-  { slug: 'privacy', label: 'Privacy policy', desc: 'What we collect, what we don\'t, your rights.' },
-  { slug: 'terms', label: 'Terms of use', desc: `The rules for using ${SITE_CONFIG.name}.` },
-  { slug: 'disclaimer', label: 'Disclaimer', desc: 'Not financial / medical / legal advice. Includes the SEBI section.' },
+  {
+    slug: 'privacy',
+    label: 'Privacy policy',
+    desc: "What we collect, what we don't, your rights.",
+  },
+  { slug: 'terms', label: 'Terms of use', desc: 'The rules for using oriz finance.' },
+  { slug: 'disclaimer', label: 'Disclaimer', desc: 'Includes the SEBI / IRDAI / RBI section.' },
   { slug: 'cookies', label: 'Cookie policy', desc: 'What cookies and localStorage we set.' },
   { slug: 'grievance', label: 'Grievance officer', desc: 'Mandatory contact under IT Rules 2021.' },
 ]
 ---
 
-<BaseLayout title={`Legal — ${SITE_CONFIG.name}`} description={`Privacy, terms, and grievance contact for ${SITE_CONFIG.origin}.`}>
-  <header class="container-prose page-head">
-    <p class="eyebrow"><a href="/">{SITE_CONFIG.name}</a> / Legal</p>
+<BaseLayout
+  title="Legal — oriz finance"
+  description="Privacy, terms, and grievance contact for finance.oriz.in."
+>
+  <header class="prose-spine page-head">
+    <p class="eyebrow"><a href="/">finance</a> / legal</p>
     <h1>Legal</h1>
   </header>
 
-  <section class="container-prose section">
+  <section class="prose-spine legal-section">
     <ul class="legal-list">
       {sections.map((s) => (
         <li>
-          <a href={`/legal/${s.slug}/`} class="card">
-            <h2>{s.label}</h2>
-            <p>{s.desc}</p>
-            <span class="arrow" aria-hidden="true">→</span>
+          <a class="toc-row legal-row" href={`/legal/${s.slug}/`}>
+            <span class="toc-name legal-name">{s.label}</span>
+            <span class="toc-value legal-desc">{s.desc}</span>
           </a>
         </li>
       ))}
@@ -33,23 +38,33 @@ const sections = [
 </BaseLayout>
 
 <style>
-  .page-head { padding-block: 3rem 1.5rem; border-bottom: 1px solid var(--color-border); }
-  .eyebrow { color: var(--color-fg-muted); font-size: 0.8125rem; margin: 0 0 0.5rem; }
-  .eyebrow a { color: var(--color-fg-muted); text-decoration: none; }
-  h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
-  .section { padding-block: 2.5rem 4rem; }
-  .legal-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.625rem; }
-  .card {
-    display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center;
-    padding: 1.25rem 1.5rem;
-    background: var(--color-bg-soft);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    color: var(--color-fg); text-decoration: none;
+  .legal-section {
+    padding-block: 2.5rem 5rem;
   }
-  .card:hover { border-color: color-mix(in oklab, var(--color-accent) 50%, var(--color-border)); color: var(--color-fg); }
-  .card h2 { font-family: var(--font-serif); font-size: 1.125rem; font-weight: 600; margin: 0 0 0.25rem; }
-  .card p { color: var(--color-fg-muted); margin: 0; font-size: 0.9375rem; }
-  .arrow { color: var(--color-fg-soft); font-size: 1.125rem; }
-  .card:hover .arrow { color: var(--color-accent); }
+  .legal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .legal-row {
+    padding-block: 0.625rem;
+    align-items: baseline;
+  }
+  .legal-name {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: var(--ink);
+  }
+  .legal-row:hover .legal-name {
+    color: var(--accent);
+  }
+  .legal-desc {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--ink-mute);
+  }
 </style>

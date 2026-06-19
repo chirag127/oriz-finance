@@ -7,12 +7,12 @@ import { SITE_CONFIG } from '~/lib/siteConfig'
   title={`About — ${SITE_CONFIG.name}`}
   description={`What ${SITE_CONFIG.name} is and how it fits in the oriz family.`}
 >
-  <header class="container-prose page-head">
-    <p class="eyebrow"><a href="/">{SITE_CONFIG.name}</a> / About</p>
-    <h1>About {SITE_CONFIG.name}</h1>
+  <header class="prose-spine page-head">
+    <p class="eyebrow"><a href="/">finance</a> / about</p>
+    <h1>About oriz finance</h1>
   </header>
 
-  <article class="container-prose prose">
+  <article class="prose-spine prose">
     <p class="lede">
       <strong>{SITE_CONFIG.name}</strong> — {SITE_CONFIG.tagline}.
     </p>
@@ -20,50 +20,52 @@ import { SITE_CONFIG } from '~/lib/siteConfig'
     <h2>Why this site exists</h2>
     <p>
       Most online financial calculators in India are wrappers around a single
-      formula glued to a lead-capture form. {SITE_CONFIG.name} flips that:
-      the math is the product. Each calculator shows you the formula it used,
-      the assumptions it made, and the year-by-year breakdown when one exists.
-      No sign-up, no &ldquo;talk to an advisor&rdquo; popups, no affiliate
-      redirects between you and the answer.
+      formula glued to a lead-capture form. Finance flips that: the math is
+      the product. Each calculator shows you the formula it used, the
+      assumptions it made, and the year-by-year breakdown when one exists.
+      No sign-up, no "talk to an advisor" popups, no affiliate redirects
+      between you and the answer.
     </p>
 
     <h2>What it covers</h2>
     <p>
-      SIP, lumpsum, step-up SIP, SWP, and goal-based investment planning.
-      Home, car, personal, and education loan EMIs with full amortization.
-      FD, RD, PPF, NPS, NSC, SSY. Take-home pay, HRA exemption, gratuity,
-      leave encashment, GST. CAGR, XIRR, FIRE, inflation impact. Calculators
-      get added when the math is unambiguous and the inputs are commonly
-      asked.
+      <span class="num">28</span> calculators across four ledgers — Investments,
+      Loans &amp; EMI, Banking &amp; savings, Tax &amp; salary. SIP, lumpsum,
+      step-up SIP, SWP, FIRE, CAGR/XIRR, goal planner. Home, car, personal,
+      and prepayment EMIs with full amortization. FD, RD, PPF, NPS, NSC, SSY,
+      compound interest. Take-home pay, HRA exemption, gratuity, leave
+      encashment, GST, income tax. Calculators get added when the math is
+      unambiguous and the inputs are commonly asked.
     </p>
 
     <h2>What it is not</h2>
     <p>
       Not investment advice. Not a SEBI-registered advisor. Not a place to
-      open an account, take a loan, or buy insurance. Outputs are mathematical
-      projections from your inputs, nothing more — see the
-      <a href="/legal/disclaimer/">disclaimer</a>.
+      open an account, take a loan, or buy insurance. Outputs are
+      mathematical projections from your inputs, nothing more — see the
+      <a href="/legal/disclaimer/">SEBI/IRDAI/RBI disclaimer</a>.
     </p>
 
     <h2>Part of oriz</h2>
     <p>
-      {SITE_CONFIG.name} is one of nine static sites under
-      <a href="https://oriz.in">oriz.in</a> — built by Chirag Singhal, deployed
-      to Cloudflare's edge, sharing one Firebase sign-in across the family. See
-      the <a href="https://oriz.in">oriz hub</a> for the full lineup, or the
-      <a href="/contact/">contact page</a> if you spot something wrong.
+      Finance is one of <span class="num">11</span> static sites under
+      <a href="https://oriz.in">oriz.in</a> — built by Chirag Singhal,
+      deployed to Cloudflare's edge, sharing one Firebase sign-in across
+      the family. See the <a href="https://oriz.in">oriz hub</a> for the
+      full lineup, or the <a href="/contact/">contact page</a> if you spot
+      a calculation that looks off.
+    </p>
+
+    <h2>Type, grid, signature</h2>
+    <p>
+      The page is a printed graph sheet — an 8px CSS grid lives behind every
+      view, fixed to the viewport so scrolling reads as paper sliding under
+      a fixed sheet. Headlines are set in <strong>Fraunces</strong> at one
+      size only. Body is <strong>Source Sans 3</strong>. Every numeric is
+      <strong>JetBrains Mono</strong> with tabular nums + slashed zero. The
+      two motifs that belong only to finance — leader-dotted TOC rows and
+      the <code>══</code> double-rule totals row — show up everywhere a
+      list or a sum is rendered.
     </p>
   </article>
 </BaseLayout>
-
-<style>
-  .page-head { padding-block: 3rem 1.5rem; border-bottom: 1px solid var(--color-border); }
-  .eyebrow { color: var(--color-fg-muted); font-size: 0.8125rem; margin: 0 0 0.5rem; }
-  .eyebrow a { color: var(--color-fg-muted); text-decoration: none; }
-  h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
-  .prose { padding-block: 2.5rem 4rem; color: var(--color-prose); line-height: 1.75; font-size: 1.0625rem; }
-  .prose .lede { font-size: 1.1875rem; color: var(--color-fg); margin: 0 0 2rem; }
-  .prose h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: var(--color-fg); margin: 2.5rem 0 1rem; }
-  .prose p { margin: 0 0 1.25rem; }
-  .prose a { color: var(--color-accent); }
-</style>

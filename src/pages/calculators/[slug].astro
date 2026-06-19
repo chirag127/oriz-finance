@@ -1,0 +1,218 @@
+---
+import SIPCalculator from '~/components/calculators/SIPCalculator.tsx'
+/*
+ * /calculators/[slug] — calculator detail page.
+ *
+ * SIP is the one wired-up calculator (the working example, end-to-end). The
+ * other 27 slugs hit a "coming soon" stub that still uses the same chrome
+ * and breadcrumb-as-ledger so the URL space is consistent and the Footer's
+ * leader-dotted index works for every entry.
+ *
+ * Static route generation is gated by `getStaticPaths`. Astro's `output:
+ * 'static'` mode emits one HTML file per slug from the catalogue.
+ */
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import { CALCULATORS, getCalculator, LEDGERS } from '~/lib/catalogue'
+
+export function getStaticPaths() {
+  return CALCULATORS.map((c) => ({ params: { slug: c.slug } }))
+}
+
+const { slug } = Astro.params
+const calc = getCalculator(slug as string)
+if (!calc) {
+  return Astro.redirect('/#catalogue')
+}
+const ledgerLabel = LEDGERS.find((l) => l.key === calc.ledger)?.label ?? ''
+---
+
+<BaseLayout
+  title={`${calc.name} calculator — oriz finance`}
+  description={`${calc.brief}. Browser-only. Inputs never leave your device. Includes formula and assumptions.`}
+>
+  <article class="spine calc-page">
+    {/* ── Breadcrumb-as-ledger ── */}
+    <nav class="calc-crumb mono" aria-label="Breadcrumb">
+      <a href="/">finance</a>
+      <span aria-hidden="true">/</span>
+      <a href="/#catalogue">{ledgerLabel.toLowerCase()}</a>
+      <span aria-hidden="true">/</span>
+      <span class="calc-crumb-current">{calc.name.toLowerCase()}</span>
+    </nav>
+
+    <header class="calc-head">
+      <h1 class="calc-h">{calc.name}</h1>
+      <p class="calc-lede">{calc.brief}.</p>
+      <p class="calc-meta mono">
+        Ledger: {ledgerLabel} &middot; Status:{' '}
+        <span class="calc-status">{calc.live ? 'live' : 'in preparation'}</span>
+      </p>
+    </header>
+
+    <hr class="hairline" />
+
+    {calc.live && calc.slug === 'sip' && (
+      <section class="calc-body" aria-label="SIP calculator">
+        <SIPCalculator client:idle />
+      </section>
+    )}
+
+    {!calc.live && (
+      <section class="calc-stub" aria-label="In preparation">
+        <h2 class="stub-h mono">In preparation</h2>
+        <p>
+          This calculator's math is documented; the page is being wired up.
+          Until then, the SIP calculator is a working reference of how each
+          page on the site is shaped — three columns (inputs / result + chart
+          / formula), full-width year-by-year ledger, double-rule totals row.
+        </p>
+        <p>
+          <a class="stub-cta" href="/calculators/sip/">Open the SIP calculator →</a>
+        </p>
+
+        <h2 class="stub-h stub-h-2 mono">What this will compute</h2>
+        <p class="stub-brief">{calc.brief}.</p>
+
+        {/*
+          The calculator catalogue at the bottom is itself a leader-dotted
+          TOC — same component, same ledger groupings — so a visitor who
+          lands here can still browse every calculator without going home.
+        */}
+        <h2 class="stub-h stub-h-2 mono">Other calculators</h2>
+        {LEDGERS.map((l) => (
+          <div class="stub-ledger">
+            <h3 class="stub-ledger-h mono">{l.label}</h3>
+            <ul class="stub-list">
+              {CALCULATORS.filter((c) => c.ledger === l.key).map((c) => (
+                <li>
+                  <a class="toc-row" href={`/calculators/${c.slug}/`}>
+                    <span class="toc-name">{c.name}</span>
+                    <span class="toc-value mono">{c.live ? 'live' : 'soon'}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .calc-page {
+    padding-block: 1.5rem 4rem;
+  }
+  .calc-crumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-mute);
+    margin-block: 1rem 1.25rem;
+    font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
+  }
+  .calc-crumb a {
+    color: var(--ink-mute);
+    text-decoration: none;
+  }
+  .calc-crumb a:hover {
+    color: var(--accent);
+  }
+  .calc-crumb-current {
+    color: var(--ink);
+  }
+
+  .calc-head {
+    padding-bottom: 1.5rem;
+  }
+  .calc-h {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-size: clamp(2rem, 4.5vw, 2.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .calc-lede {
+    margin: 0.75rem 0 0;
+    color: var(--ink-mute);
+    font-size: 1.0625rem;
+    max-width: 60ch;
+  }
+  .calc-meta {
+    margin: 0.75rem 0 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+  }
+  .calc-status {
+    color: var(--accent);
+  }
+
+  .calc-body {
+    padding-top: 2rem;
+  }
+
+  .calc-stub {
+    padding-top: 2rem;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .calc-stub p {
+    margin: 0 0 1rem;
+    max-width: 64ch;
+  }
+  .stub-h {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-mute);
+    font-weight: 500;
+    margin: 0 0 0.75rem;
+  }
+  .stub-h-2 {
+    margin-top: 2.5rem;
+  }
+  .stub-cta {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .stub-brief {
+    color: var(--ink);
+  }
+  .stub-ledger {
+    margin-top: 1.25rem;
+  }
+  .stub-ledger-h {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-mute);
+    font-weight: 500;
+    margin: 0 0 0.5rem;
+  }
+  .stub-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.125rem 2rem;
+  }
+  @media (min-width: 760px) {
+    .stub-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

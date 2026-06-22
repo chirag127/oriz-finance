@@ -19,8 +19,7 @@
 import '~/styles/global.css'
 import '~/styles/oriz-ui-overrides.css'
 import ConsentBanner from '@chirag127/astro-chrome/ConsentBanner.astro'
-import Footer from '@chirag127/astro-chrome/Footer.astro'
-import Header from '@chirag127/astro-chrome/Header.astro'
+import Layout from '@chirag127/astro-chrome/Layout.astro'
 import JsonLd from '~/components/JsonLd.astro'
 import { SITE_CONFIG } from '~/lib/siteConfig'
 
@@ -44,6 +43,12 @@ const {
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT
 const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN
 const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
+const bottomBarActions = [
+  { icon: '⌂', label: 'Home', href: 'https://oriz.in/' },
+  { icon: '✎', label: 'Blog', href: 'https://blog.oriz.in/' },
+  { icon: '⚒', label: 'Tools', href: '/' },
+  { icon: 'ℹ', label: 'About', href: '/about/' },
+]
 import '@chirag127/astro-shell/tokens.css'
 ---
 
@@ -116,9 +121,9 @@ import '@chirag127/astro-shell/tokens.css'
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
-    <Header />
-    <main id="main"><slot /></main>
-    <Footer />
+    <Layout bottomBarActions={bottomBarActions}>
+      <slot />
+    </Layout>
     <ConsentBanner />
   </body>
 </html>

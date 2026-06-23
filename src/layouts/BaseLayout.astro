@@ -13,6 +13,7 @@
 import '~/styles/global.css'
 import '~/styles/oriz-ui-overrides.css'
 import '@chirag127/astro-shell/tokens.css'
+import FamilyChrome from '@chirag127/astro-shell/components/FamilyChrome.astro'
 import BottomBar from '@chirag127/astro-chrome/BottomBar.astro'
 import ConsentBanner from '@chirag127/astro-chrome/ConsentBanner.astro'
 import Footer from '@chirag127/astro-chrome/Footer.astro'
@@ -102,6 +103,7 @@ const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
     }
   </head>
   <body>
+    <FamilyChrome slug="oriz-paisa-finance-tools-app" title="Finance" accent="#1f6b4a" />
     <a href="#main" class="skip-link">Skip to content</a>
     <Header />
     <Sidebar>
